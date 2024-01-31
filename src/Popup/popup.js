@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { useState } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
 
 function Popup() {
@@ -16,7 +17,12 @@ function Popup() {
     };
 
     const saveSnippet = () => {
-        const newSnippet = { name: snippetName, content: snippetContent };
+        if (snippets.some(snippet => snippet.name === snippetName)) {
+            console.error('Snippet name must be unique.');
+            return;
+        }
+    
+        const newSnippet = { id: snippetName, name: snippetName, content: snippetContent };
         chrome.storage.local.get({ snippets: [] }, (result) => {
             const updatedSnippets = [...result.snippets, newSnippet];
             chrome.storage.local.set({ snippets: updatedSnippets }, () => {
@@ -26,7 +32,8 @@ function Popup() {
                 setSnippetContent('');
             });
         });
-    };    
+    };
+    
 
     const loadSnippets = () => {
         chrome.storage.local.get({ snippets: [] }, (result) => {
@@ -35,6 +42,18 @@ function Popup() {
             console.log('Loaded snippets:', loadedSnippets);
             setSnippets(loadedSnippets);
         });
+    };
+
+    const onDragEnd = (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const items = Array.from(snippets);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        setSnippets(items);
     };
 
     return (
@@ -61,20 +80,41 @@ function Popup() {
                     value="Save snippet"
                     onClick={saveSnippet}
                 />
+                <input
+                    id="loadSnippets"
+                    type="submit"
+                    value="Load snippets"
+                    onClick={loadSnippets}
+                />
             </div>
-            <input
-            id="loadSnippets"
-            type="submit"
-            value="Load snippets"
-            onClick={loadSnippets}
-            />
-        <div id="snippetContainer">
-            {snippets.map((snippet, index) => (
-                <div key={index}>
-                    <div>{snippet.name}</div>
-                </div>
-            ))}
-        </div>
+            
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="snippetsDroppable">
+                    {(provided) => (
+                        <div 
+                            {...provided.droppableProps} 
+                            ref={provided.innerRef}
+                            id="snippetContainer"
+                        >
+                            {snippets.map((snippet, index) => (
+                                <Draggable key={snippet.name} draggableId={snippet.name} index={index}>
+                                    {(provided) => (
+                                        <div 
+                                            ref={provided.innerRef} 
+                                            {...provided.draggableProps} 
+                                            {...provided.dragHandleProps}
+                                            className="snippet-item"
+                                        >
+                                            <div>{snippet.name}</div>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
         </div>
     );
 }
