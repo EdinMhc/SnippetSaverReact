@@ -7,41 +7,35 @@ function Popup() {
     const [snippetContent, setSnippetContent] = useState('');
     const [snippets, setSnippets] = useState([]);
 
-    // Function to handle changes in the snippet name input
     const handleNameChange = (event) => {
         setSnippetName(event.target.value);
     };
 
-    // Function to handle changes in the snippet content textarea
     const handleContentChange = (event) => {
         setSnippetContent(event.target.value);
     };
 
-    // Function to save the snippet to the browser's storage
     const saveSnippet = () => {
         const newSnippet = { name: snippetName, content: snippetContent };
         chrome.storage.local.get({ snippets: [] }, (result) => {
             const updatedSnippets = [...result.snippets, newSnippet];
             chrome.storage.local.set({ snippets: updatedSnippets }, () => {
                 console.log('Snippet saved');
-                // Optionally clear the input fields
+                setSnippets(updatedSnippets);
                 setSnippetName('');
                 setSnippetContent('');
             });
         });
-    };
+    };    
 
-    const loadSnippets = async () => {
-        let loadedSnippets =  chrome.storage.local.get({ snippets: [] }, (result) => {
-            console.log('Loaded snippets:', result.snippets);
-            setSnippets(result.snippets);
+    const loadSnippets = () => {
+        chrome.storage.local.get({ snippets: [] }, (result) => {
+            let loadedSnippets = result.snippets;
+            loadedSnippets.sort((a, b) => a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? -1 : 1);
+            console.log('Loaded snippets:', loadedSnippets);
+            setSnippets(loadedSnippets);
         });
-    
-        loadedSnippets.sort((a, b) => a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? -1 : 1);
-    
-        setSnippets(loadedSnippets);
     };
-    
 
     return (
         <div className="popup-container">
