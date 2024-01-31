@@ -1,6 +1,6 @@
 /* global chrome */
 import React, { useState } from 'react';
-import '../Styles/popup.css'; // Adjust the path to your CSS file
+import '../Styles/popup.css';
 
 function Popup() {
     const [snippetName, setSnippetName] = useState('');
@@ -70,7 +70,7 @@ function Popup() {
             />
         <div id="snippetContainer">
             {snippets.map((snippet, index) => (
-                <div key={index} draggable={true}>
+                <div key={index}>
                     <div>{snippet.name}</div>
                 </div>
             ))}
