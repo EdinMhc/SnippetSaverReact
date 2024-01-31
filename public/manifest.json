@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Snippet Saver",
+  "version": "1.5",
+  "description": "Save and organize code snippets quickly and easily",
+  "icons": {
+    "16": "snippetSaverIcon.png",
+    "48": "snippetSaverIcon.png",
+    "128": "snippetSaverIcon.png"
+  },
+  "permissions": ["activeTab", "storage", "contextMenus"],
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

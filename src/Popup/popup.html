@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../Styles/popup.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+<button id="settings">Settings</button>
+    <h1 id="header">Snippet saver</h1>
+    <input id="snippetName" type="text" placeholder="Name">
+    <textarea id="snippetContent" placeholder="Content"></textarea>
+    <p id="errorMessage"></p>
+    <div class="button-container">
+        <input id="saveSnippet" type="submit" value="Save snippet">
+        <input id="loadSnippets" type="submit" value="Load snippets">
+    </div>
+    <div id="parentContainer">
+        <div id="snippetContainer"></div>
+        <button id="deleteAll" style="display: none;" class="delete-button">Delete All</button>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
