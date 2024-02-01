@@ -12,17 +12,22 @@ export const getHandleAddingContent = (setSnippetContent) => {
     };
 };
 
+export const saveSnippetOrder = (snippets) => {
+    chrome.storage.local.set({ snippets: snippets });
+};
+
 export const saveSnippet = (snippets, setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent) => {
     if (snippets.some(snippet => snippet.name === snippetName)) {
-        console.error('Snippet name must be unique.');
         return;
     }
 
-    const newSnippet = { id: snippetName, name: snippetName, content: snippetContent, isFavorite: false };
+    const maxId = snippets.reduce((max, snippet) => Math.max(max, snippet.id), 0);
+    const newId = maxId + 1;
+
+    const newSnippet = { id: newId, name: snippetName, content: snippetContent, isFavorite: false };
     chrome.storage.local.get({ snippets: [] }, (result) => {
         const updatedSnippets = [...result.snippets, newSnippet];
         chrome.storage.local.set({ snippets: updatedSnippets }, () => {
-            console.log('Snippet saved');
             setSnippets(updatedSnippets);
             setSnippetName('');
             setSnippetContent('');
@@ -33,9 +38,13 @@ export const saveSnippet = (snippets, setSnippets, snippetName, snippetContent, 
 export const loadSnippets = (setSnippets) => {
     chrome.storage.local.get({ snippets: [] }, (result) => {
         let loadedSnippets = result.snippets;
-        loadedSnippets.sort((a, b) => a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? -1 : 1);
-        console.log('Loaded snippets:', loadedSnippets);
-        setSnippets(loadedSnippets);
+
+        let favoriteSnippets = loadedSnippets.filter(snippet => snippet.isFavorite);
+        let nonFavoriteSnippets = loadedSnippets.filter(snippet => !snippet.isFavorite);
+
+        let sortedSnippets = [...favoriteSnippets, ...nonFavoriteSnippets];
+
+        setSnippets(sortedSnippets);
     });
 };
 
@@ -47,17 +56,19 @@ export const toggleFavoriteStatus = (snippetName, snippets, setSnippets) => {
         return snippet;
     });
 
-    setSnippets(updatedSnippets);
-    chrome.storage.local.set({ snippets: updatedSnippets }, () => {
-        console.log('Updated favorite status');
-    });
+    let favoriteSnippets = updatedSnippets.filter(snippet => snippet.isFavorite);
+    let nonFavoriteSnippets = updatedSnippets.filter(snippet => !snippet.isFavorite);
+
+    let sortedSnippets = [...favoriteSnippets, ...nonFavoriteSnippets];
+
+    setSnippets(sortedSnippets);
+    chrome.storage.local.set({ snippets: sortedSnippets });
 };
+
 
 export const copySnippet = (snippetContent) => {
     navigator.clipboard.writeText(snippetContent)
-        .then(() => {
-            console.log('Snippet content copied to clipboard');
-        })
+        .then()
         .catch(err => {
             console.error('Failed to copy snippet: ', err);
         });
@@ -67,7 +78,6 @@ export  const deleteSnippet = (snippetName, snippets, setSnippets) => {
     const updatedSnippets = snippets.filter(snippet => snippet.name !== snippetName);
     chrome.storage.local.set({ snippets: updatedSnippets }, () => {
         setSnippets(updatedSnippets);
-        console.log('Snippet deleted');
     });
 };
 
@@ -78,4 +88,31 @@ export const getToggleSnippetsVisibility = (snippetsVisible, setSnippetsVisible,
         }
         setSnippetsVisible(!snippetsVisible);
     };
+};
+
+export const toggleEdit = (snippetId, snippets, setEditingValue, setEditingId, setSnippets) => {
+    const updatedSnippets = snippets.map(snippet => {
+        if (snippet.id === snippetId) {
+            if (!snippet.isEditing) {
+                setEditingValue(snippet.name);
+                setEditingId(snippetId);
+            }
+            return { ...snippet, isEditing: !snippet.isEditing };
+        }
+        return snippet;
+    });
+    setSnippets(updatedSnippets);
+};
+
+export const applyNameChange = (snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue) => {
+    const updatedSnippets = snippets.map(snippet => {
+        if (snippet.id === editingId) {
+            return { ...snippet, name: editingValue, isEditing: false };
+        }
+        return snippet;
+    });
+    setSnippets(updatedSnippets);
+    chrome.storage.local.set({ snippets: updatedSnippets });
+    setEditingValue("");
+    setEditingId(null);
 };
