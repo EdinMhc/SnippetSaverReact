@@ -83,11 +83,15 @@ input[type=submit] {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
     }
     
     #snippetContainer .material-icons {
         font-size: 18px;
         flex-shrink: 0;
+        margin-left: 2px;
     }
     
     #snippetContainer > div:hover {
@@ -143,7 +147,7 @@ input.input-error {
   }
   
 
-.copy-button, .delete-button, .edit-button, .apply-button, .favorite-button{
+  .copy-button, .delete-button, .edit-button, .apply-button, .favorite-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -215,6 +219,21 @@ input.input-error {
 
 .favorite-button.filled {
     color: black;
+}
+
+.snippet-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.snippet-item .snippet-content {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.snippet-item .action-icons {
+    display: flex;
 }
 
 /* Light mode */

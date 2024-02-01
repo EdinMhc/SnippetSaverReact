@@ -67,19 +67,19 @@ function Popup() {
                                     <Draggable key={snippet.name} draggableId={snippet.name} index={index}>
                                         {(provided) => (
                                             <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="snippet-item">
-                                                    <div>{snippet.name}</div>
-                                                        <span className="favorite-button material-icons" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
-                                                            {snippet.isFavorite ? 'favorite' : 'favorite_border'}
-                                                        </span>
-                                                        <span className="edit-button material-icons">
-                                                            edit
-                                                        </span>
-                                                        <span className="copy-button material-icons" onClick={() => copySnippet(snippet.content)}>
-                                                            content_copy
-                                                        </span>
-                                                        <span className="delete-button material-icons" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
-                                                            delete
-                                                        </span>
+                                                <div>{snippet.name}</div>
+                                                <span className="favorite-button material-icons" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
+                                                    {snippet.isFavorite ? 'favorite' : 'favorite_border'}
+                                                </span>
+                                                <span className="edit-button material-icons">
+                                                    edit
+                                                </span>
+                                                <span className="copy-button material-icons" onClick={() => copySnippet(snippet.content)}>
+                                                    content_copy
+                                                </span>
+                                                <span className="delete-button material-icons" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
+                                                    delete
+                                                </span>
                                             </div>
                                         )}
                                     </Draggable>
