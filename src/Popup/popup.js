@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
+import { saveSnippet, loadSnippets } from '../Utils/snippetActions';
 
 function Popup() {
     const [snippetName, setSnippetName] = useState('');
     const [snippetContent, setSnippetContent] = useState('');
     const [snippets, setSnippets] = useState([]);
+    const [snippetsVisible, setSnippetsVisible] = useState(false);
 
     const handleNameChange = (event) => {
         setSnippetName(event.target.value);
@@ -16,32 +18,47 @@ function Popup() {
         setSnippetContent(event.target.value);
     };
 
-    const saveSnippet = () => {
-        if (snippets.some(snippet => snippet.name === snippetName)) {
-            console.error('Snippet name must be unique.');
-            return;
-        }
+    const toggleFavoriteStatus = (snippetName) => {
+        const updatedSnippets = snippets.map(snippet => {
+            if (snippet.name === snippetName) {
+                return { ...snippet, isFavorite: !snippet.isFavorite };
+            }
+            return snippet;
+        });
     
-        const newSnippet = { id: snippetName, name: snippetName, content: snippetContent };
-        chrome.storage.local.get({ snippets: [] }, (result) => {
-            const updatedSnippets = [...result.snippets, newSnippet];
-            chrome.storage.local.set({ snippets: updatedSnippets }, () => {
-                console.log('Snippet saved');
-                setSnippets(updatedSnippets);
-                setSnippetName('');
-                setSnippetContent('');
-            });
+        setSnippets(updatedSnippets);
+        chrome.storage.local.set({ snippets: updatedSnippets }, () => {
+            console.log('Updated favorite status');
         });
     };
     
-
-    const loadSnippets = () => {
-        chrome.storage.local.get({ snippets: [] }, (result) => {
-            let loadedSnippets = result.snippets;
-            loadedSnippets.sort((a, b) => a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? -1 : 1);
-            console.log('Loaded snippets:', loadedSnippets);
-            setSnippets(loadedSnippets);
+    const copySnippet = (snippetContent) => {
+        navigator.clipboard.writeText(snippetContent)
+            .then(() => {
+                console.log('Snippet content copied to clipboard');
+            })
+            .catch(err => {
+                console.error('Failed to copy snippet: ', err);
+            });
+    };
+    
+    const toggleSnippetEditMode = (snippetName) => {
+        // Implement the logic to enable editing mode for the snippet
+    };
+    
+    const deleteSnippet = (snippetName) => {
+        const updatedSnippets = snippets.filter(snippet => snippet.name !== snippetName);
+        chrome.storage.local.set({ snippets: updatedSnippets }, () => {
+            setSnippets(updatedSnippets);
+            console.log('Snippet deleted');
         });
+    };
+
+    const toggleSnippetsVisibility = () => {
+        if (!snippetsVisible) {
+            loadSnippets(setSnippets);
+        }
+        setSnippetsVisible(!snippetsVisible);
     };
 
     const onDragEnd = (result) => {
@@ -78,43 +95,48 @@ function Popup() {
                     id="saveSnippet"
                     type="submit"
                     value="Save snippet"
-                    onClick={saveSnippet}
+                    onClick={() => saveSnippet(snippets, setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent)}
                 />
                 <input
                     id="loadSnippets"
                     type="submit"
                     value="Load snippets"
-                    onClick={loadSnippets}
+                    onClick={toggleSnippetsVisibility}
                 />
             </div>
             
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="snippetsDroppable">
-                    {(provided) => (
-                        <div 
-                            {...provided.droppableProps} 
-                            ref={provided.innerRef}
-                            id="snippetContainer"
-                        >
-                            {snippets.map((snippet, index) => (
-                                <Draggable key={snippet.name} draggableId={snippet.name} index={index}>
-                                    {(provided) => (
-                                        <div 
-                                            ref={provided.innerRef} 
-                                            {...provided.draggableProps} 
-                                            {...provided.dragHandleProps}
-                                            className="snippet-item"
-                                        >
-                                            <div>{snippet.name}</div>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+            {snippetsVisible && (
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="snippetsDroppable">
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
+                                {snippets.map((snippet, index) => (
+                                    <Draggable key={snippet.name} draggableId={snippet.name} index={index}>
+                                        {(provided) => (
+                                            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="snippet-item">
+                                                <div>{snippet.name}</div>
+                                                <span className="favorite-button material-icons" onClick={() => toggleFavoriteStatus(snippet.name)}>
+                                                    {snippet.isFavorite ? 'favorite' : 'favorite_border'}
+                                                </span>
+                                                <span className="edit-button material-icons" onClick={() => toggleSnippetEditMode(snippet.name)}>
+                                                    edit
+                                                </span>
+                                                <span className="copy-button material-icons" onClick={() => copySnippet(snippet.content)}>
+                                                    content_copy
+                                                </span>
+                                                <span className="delete-button material-icons" onClick={() => deleteSnippet(snippet.name)}>
+                                                    delete
+                                                </span>
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            )}
         </div>
     );
 }
