@@ -227,6 +227,19 @@ input.input-error {
     align-items: center;
 }
 
+.snippet-item input[type="text"] {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-shadow: none;
+    outline: none;
+}
+
 .snippet-item .snippet-content {
     flex-grow: 1;
     text-align: left;
@@ -234,6 +247,24 @@ input.input-error {
 
 .snippet-item .action-icons {
     display: flex;
+}
+
+.snippet-item.editing .action-button {
+    display: none;
+}
+
+.action-button, .apply-button {
+    cursor: pointer;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+
+.snippet-item.editing .apply-button {
+    display: inline-flex;
 }
 
 /* Light mode */

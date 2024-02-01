@@ -66,52 +66,56 @@ function Popup() {
             </div>
     
             {snippetsVisible && (
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="snippetsDroppable">
-                        {(provided) => (
-                            <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
-                                {snippets.map((snippet, index) => (
-                                    <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index}>
-                                        {(provided) => (
-                                            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="snippet-item">
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="snippetsDroppable">
+                    {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
+                            {snippets.map((snippet, index) => (
+                                <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index}>
+                                    {(provided) => (
+                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`snippet-item ${snippet.isEditing ? 'editing' : ''}`}>
+                                            {snippet.isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    value={editingValue}
+                                                    onChange={handleInputChange}
+                                                    onBlur={() => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                <div className="snippet-name">{snippet.name}</div>
+                                            )}
+                                            <div className="action-buttons">
                                                 {snippet.isEditing ? (
-                                                    <input
-                                                        type="text"
-                                                        value={editingValue}
-                                                        onChange={handleInputChange}
-                                                        onBlur={(e) => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}
-                                                        autoFocus
-                                                    />
+                                                    <span className="apply-button material-icons" onClick={() => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}>check</span>
                                                 ) : (
-                                                    <div>{snippet.name}</div>
+                                                    <>
+                                                        <span className="favorite-button material-icons action-button" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
+                                                            {snippet.isFavorite ? 'favorite' : 'favorite_border'}
+                                                        </span>
+                                                        <span className="edit-button material-icons action-button" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets)}>
+                                                            edit
+                                                        </span>
+                                                        <span className="copy-button material-icons action-button" onClick={() => copySnippet(snippet.content)}>
+                                                            content_copy
+                                                        </span>
+                                                        <span className="delete-button material-icons action-button" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
+                                                            delete
+                                                        </span>
+                                                    </>
                                                 )}
-                                                <span className="favorite-button material-icons" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
-                                                    {snippet.isFavorite ? 'favorite' : 'favorite_border'}
-                                                </span>
-                                                {snippet.isEditing ? (
-                                                    <span className="material-icons" onClick={() => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}>check</span>
-                                                ) : (
-                                                    <span className="edit-button material-icons" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets)}>
-                                                        edit
-                                                    </span>
-                                                )}
-                                                <span className="copy-button material-icons" onClick={() => copySnippet(snippet.content)}>
-                                                    content_copy
-                                                </span>
-                                                <span className="delete-button material-icons" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
-                                                    delete
-                                                </span>
                                             </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-            )}
-        </div>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
+        )}
+    </div>
     );
 }
 
