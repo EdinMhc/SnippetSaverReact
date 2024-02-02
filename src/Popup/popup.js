@@ -11,6 +11,7 @@ function Popup() {
     const [snippetsVisible, setSnippetsVisible] = useState(false);
     const [editingValue, setEditingValue] = useState("");
     const [editingId, setEditingId] = useState(null);
+    const [error, setError] = useState({ hasError: false, message: "" });
 
     const handleAddingName = getHandleAddingName(setSnippetName);
     const handleAddingContent = getHandleAddingContent(setSnippetContent);
@@ -36,12 +37,14 @@ function Popup() {
     return (
         <div className="popup-container">
             <h1 id="header">Snippet Saver</h1>
+            <p id="errorMessage">{error.hasError ? error.message : ""}</p>
             <input
                 id="snippetName"
                 type="text"
                 placeholder="Name"
                 value={snippetName}
                 onChange={handleAddingName}
+                className={error.hasError ? "input-error" : ""}
             />
             <textarea
                 id="snippetContent"
@@ -49,13 +52,12 @@ function Popup() {
                 value={snippetContent}
                 onChange={handleAddingContent}
             />
-            <p id="errorMessage"></p>
             <div className="button-container">
                 <input
                     id="saveSnippet"
                     type="submit"
                     value="Save snippet"
-                    onClick={() => saveSnippet(snippets, setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent)}
+                    onClick={() => saveSnippet(setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent, setError)}
                 />
                 <input
                     id="loadSnippets"

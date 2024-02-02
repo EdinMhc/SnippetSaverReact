@@ -16,21 +16,39 @@ export const saveSnippetOrder = (snippets) => {
     chrome.storage.local.set({ snippets: snippets });
 };
 
-export const saveSnippet = (snippets, setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent) => {
-    if (snippets.some(snippet => snippet.name === snippetName)) {
-        return;
-    }
-
-    const maxId = snippets.reduce((max, snippet) => Math.max(max, snippet.id), 0);
-    const newId = maxId + 1;
-
-    const newSnippet = { id: newId, name: snippetName, content: snippetContent, isFavorite: false };
+export const saveSnippet = (setSnippets, snippetName, snippetContent, setSnippetName, setSnippetContent, setError) => {
     chrome.storage.local.get({ snippets: [] }, (result) => {
-        const updatedSnippets = [...result.snippets, newSnippet];
-        chrome.storage.local.set({ snippets: updatedSnippets }, () => {
-            setSnippets(updatedSnippets);
-            setSnippetName('');
-            setSnippetContent('');
+        const messageDuration = 2000;
+        const animationTimeBeforeItCanBePlayed = 100;
+        
+        const allSnippets = result.snippets;
+
+        if (allSnippets.some(snippet => snippet.name === snippetName)) {
+            setError({ hasError: false, message: "" });
+
+            setTimeout(() => {
+                setError({ hasError: true, message: "Snippet name already exists." });
+
+                setTimeout(() => {
+                    setError({ hasError: false, message: "" });
+                }, messageDuration);
+            }, animationTimeBeforeItCanBePlayed);
+
+            return;
+        }
+    
+        setError({ hasError: false, message: "" });
+        const maxId = allSnippets.reduce((max, snippet) => Math.max(max, snippet.id), 0);
+        const newId = maxId + 1;
+    
+        const newSnippet = { id: newId, name: snippetName, content: snippetContent, isFavorite: false };
+        chrome.storage.local.get({ snippets: [] }, (result) => {
+            const updatedSnippets = [...allSnippets, newSnippet];
+            chrome.storage.local.set({ snippets: updatedSnippets }, () => {
+                setSnippets(updatedSnippets);
+                setSnippetName('');
+                setSnippetContent('');
+            });
         });
     });
 };
