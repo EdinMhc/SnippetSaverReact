@@ -1,8 +1,8 @@
 /* global chrome */
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
-import { applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet, getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit } from '../Utils/snippetActions';
+import { applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet, getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit, editName } from '../Utils/snippetActions';
 
 function Popup() {
     const [snippetName, setSnippetName] = useState('');
@@ -12,6 +12,7 @@ function Popup() {
     const [editingValue, setEditingValue] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [error, setError] = useState({ hasError: false, message: "" });
+    const [checkmarkError, setCheckmarkError] = useState(false);
 
     const handleAddingName = getHandleAddingName(setSnippetName);
     const handleAddingContent = getHandleAddingContent(setSnippetContent);
@@ -89,7 +90,9 @@ function Popup() {
                                             )}
                                             <div className="action-buttons">
                                                 {snippet.isEditing ? (
-                                                    <span className="apply-button material-icons" onClick={() => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}>check</span>
+                                                    <span className={`apply-button material-icons ${checkmarkError ? 'checkmark-error' : ''}`} onClick={() => editName(editingId, editingValue, snippets, setSnippets, setCheckmarkError)}>
+                                                        check
+                                                    </span>
                                                 ) : (
                                                     <>
                                                         <span className="favorite-button material-icons action-button" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>

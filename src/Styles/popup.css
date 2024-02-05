@@ -185,7 +185,7 @@ input[type=submit] {
 
 /* Errors */
 input[type="text"].input-error {
-    border: 2px solid red; /* Set the border color to red */
+    border: 2px solid red;
     animation: shake 0.5s;
     animation-iteration-count: 1;
 }
@@ -199,4 +199,11 @@ input[type="text"].input-error {
 #errorMessage {
     color: red;
     font-weight: bold;
+}
+
+.checkmark-error {
+    color: white;
+    background-color: red;
+    animation: shake 0.3s;
+    animation-iteration-count: 1;
 }

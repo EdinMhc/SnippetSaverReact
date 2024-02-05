@@ -114,10 +114,12 @@ export const toggleEdit = (snippetId, snippets, setEditingValue, setEditingId, s
             if (!snippet.isEditing) {
                 setEditingValue(snippet.name);
                 setEditingId(snippetId);
+                return { ...snippet, isEditing: true };
             }
-            return { ...snippet, isEditing: !snippet.isEditing };
+            return { ...snippet, isEditing: false };
+        } else {
+            return { ...snippet, isEditing: false };
         }
-        return snippet;
     });
     setSnippets(updatedSnippets);
 };
@@ -133,4 +135,22 @@ export const applyNameChange = (snippets, setSnippets, setEditingValue, setEditi
     chrome.storage.local.set({ snippets: updatedSnippets });
     setEditingValue("");
     setEditingId(null);
+};
+
+export const editName = (snippetId, newName, snippets, setSnippets, setCheckmarkError) => {
+    if (snippets.some(snippet => snippet.name === newName && snippet.id !== snippetId)) {
+        setCheckmarkError(true);
+        setTimeout(() => setCheckmarkError(false), 2000);
+        return;
+    }
+
+    const updatedSnippets = snippets.map(snippet => {
+        if (snippet.id === snippetId) {
+            return { ...snippet, name: newName, isEditing: false };
+        }
+        return snippet;
+    });
+
+    setSnippets(updatedSnippets);
+    setCheckmarkError(false);
 };
