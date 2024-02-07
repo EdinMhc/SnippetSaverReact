@@ -13,6 +13,7 @@ function Popup() {
     const [editingId, setEditingId] = useState(null);
     const [error, setError] = useState({ hasError: false, message: "" });
     const [checkmarkError, setCheckmarkError] = useState(false);
+    const [originalName, setOriginalName] = useState("");
 
     const handleAddingName = getHandleAddingName(setSnippetName);
     const handleAddingContent = getHandleAddingContent(setSnippetContent);
@@ -79,12 +80,12 @@ function Popup() {
                                         <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`snippet-item ${snippet.isEditing ? 'editing' : ''}`}>
                                             {snippet.isEditing ? (
                                                 <input
-                                                    type="text"
-                                                    value={editingValue}
-                                                    onChange={handleInputChange}
-                                                    onBlur={() => applyNameChange(snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue)}
-                                                    autoFocus
-                                                />
+                                                type="text"
+                                                value={editingValue}
+                                                onChange={handleInputChange}
+                                                onBlur={() => applyNameChange(editingId, originalName, editingValue, snippets, setSnippets, setEditingValue, setEditingId, setCheckmarkError)}
+                                                autoFocus
+                                            />                                            
                                             ) : (
                                                 <div className="snippet-name">{snippet.name}</div>
                                             )}
@@ -98,7 +99,7 @@ function Popup() {
                                                         <span className="favorite-button material-icons action-button" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
                                                             {snippet.isFavorite ? 'favorite' : 'favorite_border'}
                                                         </span>
-                                                        <span className="edit-button material-icons action-button" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets)}>
+                                                        <span className="edit-button material-icons action-button" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName)}>
                                                             edit
                                                         </span>
                                                         <span className="copy-button material-icons action-button" onClick={() => copySnippet(snippet.content)}>

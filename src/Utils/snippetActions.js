@@ -108,34 +108,52 @@ export const getToggleSnippetsVisibility = (snippetsVisible, setSnippetsVisible,
     };
 };
 
-export const toggleEdit = (snippetId, snippets, setEditingValue, setEditingId, setSnippets) => {
+export const toggleEdit = (snippetId, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName) => {
     const updatedSnippets = snippets.map(snippet => {
         if (snippet.id === snippetId) {
             if (!snippet.isEditing) {
                 setEditingValue(snippet.name);
                 setEditingId(snippetId);
+                setOriginalName(snippet.name);
                 return { ...snippet, isEditing: true };
+            } else {
+                return { ...snippet, isEditing: false };
             }
-            return { ...snippet, isEditing: false };
         } else {
             return { ...snippet, isEditing: false };
         }
     });
+
     setSnippets(updatedSnippets);
 };
 
-export const applyNameChange = (snippets, setSnippets, setEditingValue, setEditingId, editingId, editingValue) => {
+
+export const applyNameChange = (snippetId, originalName, newName, snippets, setSnippets, setEditingValue, setEditingId, setCheckmarkError) => {
+    setCheckmarkError(false);
+
+    const isDuplicate = snippets.some(snippet => snippet.name === newName && snippet.id !== snippetId);
+    const updatedName = isDuplicate ? originalName : newName;
+
     const updatedSnippets = snippets.map(snippet => {
-        if (snippet.id === editingId) {
-            return { ...snippet, name: editingValue, isEditing: false };
+        if (snippet.id === snippetId) {
+            return { ...snippet, name: updatedName, isEditing: false };
         }
         return snippet;
     });
+
     setSnippets(updatedSnippets);
     chrome.storage.local.set({ snippets: updatedSnippets });
+
     setEditingValue("");
     setEditingId(null);
+
+    if (isDuplicate) {
+        setCheckmarkError(true);
+        setTimeout(() => setCheckmarkError(false), 2000);
+    }
 };
+
+
 
 export const editName = (snippetId, newName, snippets, setSnippets, setCheckmarkError) => {
     if (snippets.some(snippet => snippet.name === newName && snippet.id !== snippetId)) {
@@ -152,5 +170,7 @@ export const editName = (snippetId, newName, snippets, setSnippets, setCheckmark
     });
 
     setSnippets(updatedSnippets);
+    chrome.storage.local.set({ snippets: updatedSnippets });
     setCheckmarkError(false);
+
 };
