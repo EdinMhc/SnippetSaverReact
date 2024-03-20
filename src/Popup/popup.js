@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
 import { applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet, getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit, editName } from '../Utils/snippetActions';
+import { SnippetActionBar } from '../Utils/snippetActionBar';
 
 function Popup() {
     const [snippetName, setSnippetName] = useState('');
@@ -35,6 +36,10 @@ function Popup() {
     const handleInputChange = (e) => {
         setEditingValue(e.target.value);
     };
+
+    const handleSearch = () => {
+        console.log('works');
+    }
 
     return (
         <div className="popup-container">
@@ -71,6 +76,7 @@ function Popup() {
     
             {snippetsVisible && (
             <DragDropContext onDragEnd={onDragEnd}>
+                <SnippetActionBar onSearch={handleSearch} />
                 <Droppable droppableId="snippetsDroppable">
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
