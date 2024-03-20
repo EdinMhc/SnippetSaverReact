@@ -12,10 +12,6 @@ export const SnippetActionBar = ({ onSearch }) => {
         }, 0);
     };
 
-    // const handleSearchFocus = () => {
-    //     setIsSearching(true);
-    // };
-
     const handleSearchBlur = () => {
         setIsSearching(false);
     };

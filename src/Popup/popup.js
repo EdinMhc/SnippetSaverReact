@@ -1,5 +1,5 @@
 /* global chrome */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
 import { applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet, getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit, editName } from '../Utils/snippetActions';
@@ -15,6 +15,8 @@ function Popup() {
     const [error, setError] = useState({ hasError: false, message: "" });
     const [checkmarkError, setCheckmarkError] = useState(false);
     const [originalName, setOriginalName] = useState("");
+    const [filteredSnippets, setFilteredSnippets] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleAddingName = getHandleAddingName(setSnippetName);
     const handleAddingContent = getHandleAddingContent(setSnippetContent);
@@ -37,9 +39,21 @@ function Popup() {
         setEditingValue(e.target.value);
     };
 
-    const handleSearch = () => {
-        console.log('works');
-    }
+    const handleSearch = (query) => {
+        setSearchQuery(query); // Update the search query state
+        if (!query) {
+            setFilteredSnippets(snippets); // If the query is empty, show all snippets
+        } else {
+            const filtered = snippets.filter(snippet =>
+                snippet.name.toLowerCase().includes(query.toLowerCase())
+            );
+            setFilteredSnippets(filtered); // Update the filtered snippets state
+        }
+    };
+    
+    useEffect(() => {
+        setFilteredSnippets(snippets);
+    }, [snippets]);
 
     return (
         <div className="popup-container">
@@ -75,58 +89,58 @@ function Popup() {
             </div>
     
             {snippetsVisible && (
-            <DragDropContext onDragEnd={onDragEnd}>
-                <SnippetActionBar onSearch={handleSearch} />
-                <Droppable droppableId="snippetsDroppable">
-                    {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
-                            {snippets.map((snippet, index) => (
-                                <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index}>
-                                    {(provided) => (
-                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`snippet-item ${snippet.isEditing ? 'editing' : ''}`}>
-                                            {snippet.isEditing ? (
-                                                <input
-                                                type="text"
-                                                value={editingValue}
-                                                onChange={handleInputChange}
-                                                onBlur={() => applyNameChange(editingId, originalName, editingValue, snippets, setSnippets, setEditingValue, setEditingId, setCheckmarkError)}
-                                                autoFocus
-                                            />                                            
-                                            ) : (
-                                                <div className="snippet-name">{snippet.name}</div>
-                                            )}
-                                            <div className="action-buttons">
-                                                {snippet.isEditing ? (
-                                                    <span className={`apply-button material-icons ${checkmarkError ? 'checkmark-error' : ''}`} onClick={() => editName(editingId, editingValue, snippets, setSnippets, setCheckmarkError)}>
-                                                        check
-                                                    </span>
-                                                ) : (
-                                                    <>
-                                                        <span className="favorite-button material-icons action-button" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
-                                                            {snippet.isFavorite ? 'favorite' : 'favorite_border'}
-                                                        </span>
-                                                        <span className="edit-button material-icons action-button" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName)}>
-                                                            edit
-                                                        </span>
-                                                        <span className="copy-button material-icons action-button" onClick={() => copySnippet(snippet.content)}>
-                                                            content_copy
-                                                        </span>
-                                                        <span className="delete-button material-icons action-button" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
-                                                            delete
-                                                        </span>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+        <SnippetActionBar onSearch={handleSearch} />
+        <Droppable droppableId="snippetsDroppable">
+            {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
+                    {(searchQuery ? filteredSnippets : snippets).map((snippet, index) => (
+                        <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index}>
+                            {(provided) => (
+                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`snippet-item ${snippet.isEditing ? 'editing' : ''}`}>
+                                    {snippet.isEditing ? (
+                                        <input
+                                            type="text"
+                                            value={editingValue}
+                                            onChange={handleInputChange}
+                                            onBlur={() => applyNameChange(editingId, originalName, editingValue, snippets, setSnippets, setEditingValue, setEditingId, setCheckmarkError)}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <div className="snippet-name">{snippet.name}</div>
                                     )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-        )}
+                                    <div className="action-buttons">
+                                        {snippet.isEditing ? (
+                                            <span className={`apply-button material-icons ${checkmarkError ? 'checkmark-error' : ''}`} onClick={() => editName(editingId, editingValue, snippets, setSnippets, setCheckmarkError)}>
+                                                check
+                                            </span>
+                                        ) : (
+                                            <>
+                                                <span className="favorite-button material-icons action-button" onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}>
+                                                    {snippet.isFavorite ? 'favorite' : 'favorite_border'}
+                                                </span>
+                                                <span className="edit-button material-icons action-button" onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName)}>
+                                                    edit
+                                                </span>
+                                                <span className="copy-button material-icons action-button" onClick={() => copySnippet(snippet.content)}>
+                                                    content_copy
+                                                </span>
+                                                <span className="delete-button material-icons action-button" onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}>
+                                                    delete
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </Draggable>
+                    ))}
+                    {provided.placeholder}
+                </div>
+            )}
+        </Droppable>
+    </DragDropContext>
+)}
     </div>
     );
 }
