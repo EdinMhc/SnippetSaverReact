@@ -55,7 +55,10 @@ export const saveSnippet = (setSnippets, snippetName, snippetContent, setSnippet
 
 export const loadSnippets = (setSnippets) => {
     chrome.storage.local.get({ snippets: [] }, (result) => {
-        let loadedSnippets = result.snippets;
+        let loadedSnippets = result.snippets.map((snippet, index) => ({
+            ...snippet,
+            originalOrder: index
+        }));
 
         let favoriteSnippets = loadedSnippets.filter(snippet => snippet.isFavorite);
         let nonFavoriteSnippets = loadedSnippets.filter(snippet => !snippet.isFavorite);

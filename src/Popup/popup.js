@@ -17,7 +17,8 @@ function Popup() {
     const [originalName, setOriginalName] = useState("");
     const [filteredSnippets, setFilteredSnippets] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
+    const [sortMode, setSortMode] = useState('original');
+    
     const handleAddingName = getHandleAddingName(setSnippetName);
     const handleAddingContent = getHandleAddingContent(setSnippetContent);
     const toggleSnippetsVisibility = getToggleSnippetsVisibility(snippetsVisible, setSnippetsVisible, setSnippets);
@@ -40,21 +41,54 @@ function Popup() {
     };
 
     const handleSearch = (query) => {
-        setSearchQuery(query); // Update the search query state
+        setSearchQuery(query);
         if (!query) {
-            setFilteredSnippets(snippets); // If the query is empty, show all snippets
+            setFilteredSnippets(snippets);
         } else {
             const filtered = snippets.filter(snippet =>
                 snippet.name.toLowerCase().includes(query.toLowerCase())
             );
-            setFilteredSnippets(filtered); // Update the filtered snippets state
+            setFilteredSnippets(filtered);
         }
     };
     
-    useEffect(() => {
-        setFilteredSnippets(snippets);
-    }, [snippets]);
+    const applySorting = (snippetsToSort, sortMode) => {    
+        let sortedSnippets = [...snippetsToSort];
 
+        switch (sortMode) {
+            case 'a-z':
+                sortedSnippets.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'z-a':
+                sortedSnippets.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'non-favorites':
+                sortedSnippets.sort((a, b) => a.isFavorite === b.isFavorite ? 0 : a.isFavorite ? 1 : -1);
+                break;
+            case 'original':
+                sortedSnippets.sort((a, b) => a.originalOrder - b.originalOrder);
+                break;
+        }
+    
+        setFilteredSnippets(sortedSnippets);
+    };
+
+    const getNextSortMode = (currentMode) => {
+        switch (currentMode) {
+            case 'original': return 'a-z';
+            case 'a-z': return 'z-a';
+            case 'z-a': return 'non-favorites';
+            case 'non-favorites': return 'original';
+            default: return 'original';
+        }
+    };
+
+    const handleSort = () => {
+        const nextMode = getNextSortMode(sortMode);
+        setSortMode(nextMode);
+        applySorting(snippets, nextMode);
+    };
+    
     return (
         <div className="popup-container">
             <h1 id="header">Snippet Saver</h1>
@@ -90,12 +124,12 @@ function Popup() {
     
             {snippetsVisible && (
     <DragDropContext onDragEnd={onDragEnd}>
-        <SnippetActionBar onSearch={handleSearch} />
+        <SnippetActionBar onSearch={handleSearch} onSort={handleSort} />
         <Droppable droppableId="snippetsDroppable">
             {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef} id="snippetContainer">
-                    {(searchQuery ? filteredSnippets : snippets).map((snippet, index) => (
-                        <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index}>
+                    {(searchQuery.length > 0 || sortMode !== 'original' ? filteredSnippets : snippets).map((snippet, index) => (
+                        <Draggable key={snippet.id.toString()} draggableId={snippet.id.toString()} index={index} isDragDisabled={sortMode !== 'original'}>
                             {(provided) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`snippet-item ${snippet.isEditing ? 'editing' : ''}`}>
                                     {snippet.isEditing ? (

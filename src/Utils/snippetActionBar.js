@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import '../Styles/snippetActionBar.css';
 
-export const SnippetActionBar = ({ onSearch }) => {
+export const SnippetActionBar = ({ onSearch, onSort }) => {
     const [isSearching, setIsSearching] = useState(false);
     const searchInputRef = useRef(null);
 
@@ -37,7 +37,7 @@ export const SnippetActionBar = ({ onSearch }) => {
                 <button className="folder-button">
                     <span className="material-icons">folder</span>
                 </button>
-                <button className="sort-button">
+                <button className="sort-button" onClick={onSort}>
                     <span className="material-icons">sort</span>
                 </button>
             </div>
