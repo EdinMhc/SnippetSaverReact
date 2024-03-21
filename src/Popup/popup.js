@@ -68,6 +68,9 @@ function Popup() {
             case 'original':
                 sortedSnippets.sort((a, b) => a.originalOrder - b.originalOrder);
                 break;
+            case 'last-added':
+                sortedSnippets = [...snippetsToSort].sort((a, b) => b.id - a.id);
+                break;
         }
     
         setFilteredSnippets(sortedSnippets);
@@ -78,7 +81,8 @@ function Popup() {
             case 'original': return 'a-z';
             case 'a-z': return 'z-a';
             case 'z-a': return 'non-favorites';
-            case 'non-favorites': return 'original';
+            case 'non-favorites': return 'last-added';
+            case 'last-added': return 'original';
             default: return 'original';
         }
     };
