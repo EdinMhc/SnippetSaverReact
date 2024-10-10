@@ -12,6 +12,18 @@ export const getHandleAddingContent = (setSnippetContent) => {
     };
 };
 
+export const updateSnippetColor = (snippetId, newColor, snippets, setSnippets) => {
+    const updatedSnippets = snippets.map(snippet => {
+        if (snippet.id === snippetId) {
+            return { ...snippet, color: newColor };
+        }
+        return snippet;
+    });
+
+    setSnippets(updatedSnippets);
+    chrome.storage.local.set({ snippets: updatedSnippets });
+};
+
 export const saveSnippetOrder = (snippets) => {
     chrome.storage.local.set({ snippets: snippets });
 };
@@ -41,7 +53,13 @@ export const saveSnippet = (setSnippets, snippetName, snippetContent, setSnippet
         const maxId = allSnippets.reduce((max, snippet) => Math.max(max, snippet.id), 0);
         const newId = maxId + 1;
     
-        const newSnippet = { id: newId, name: snippetName, content: snippetContent, isFavorite: false };
+        const newSnippet = { 
+            id: newId, 
+            name: snippetName, 
+            content: snippetContent, 
+            isFavorite: false,
+            color: '#ffffff'
+        };
         chrome.storage.local.get({ snippets: [] }, (result) => {
             const updatedSnippets = [...allSnippets, newSnippet];
             chrome.storage.local.set({ snippets: updatedSnippets }, () => {

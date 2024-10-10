@@ -4,6 +4,16 @@ body {
     width: 300px;
 }
 
+.color-picker {
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
 input[type=text], textarea {
     width: 100%;
     padding: 12px 20px;
