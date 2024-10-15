@@ -58,7 +58,7 @@ export const saveSnippet = (setSnippets, snippetName, snippetContent, setSnippet
             name: snippetName, 
             content: snippetContent, 
             isFavorite: false,
-            color: '#ffffff'
+            color: '#D3D3D3'
         };
         chrome.storage.local.get({ snippets: [] }, (result) => {
             const updatedSnippets = [...allSnippets, newSnippet];

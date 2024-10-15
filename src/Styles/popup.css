@@ -7,7 +7,9 @@ body {
 .color-picker {
     margin-left: 10px;
     cursor: pointer;
-    border: none;
+    border: 1px;
+    border-color: black;
+    background: #333;
     padding: 0;
     width: 15px;
     height: 15px;
