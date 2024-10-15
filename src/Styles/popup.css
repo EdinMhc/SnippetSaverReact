@@ -16,6 +16,27 @@ body {
     border-radius: 50%;
 }
 
+.color-picker-wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.palette-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.color-picker {
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    cursor: pointer;
+}
+
 input[type=text], textarea {
     width: 100%;
     padding: 12px 20px;

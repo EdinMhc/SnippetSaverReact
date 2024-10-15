@@ -133,12 +133,18 @@ const Popup = () => {
                         >
                         delete
                     </span>
-                    <input
-                    type="color"
-                    value={snippet.color || '#333'}
-                    onChange={(e) => updateSnippetColor(snippet.id, e.target.value, snippets, setSnippets)}
-                    title="Change snippet color"
-                    className="color-picker material-icons action-button"/>
+                    <label className="color-picker-wrapper">
+                        <span className="palette-icon material-icons" title="Change color">
+                            palette
+                        </span>
+                        <input
+                            type="color"
+                            value={snippet.color || '#333'}
+                            onChange={(e) => updateSnippetColor(snippet.id, e.target.value, snippets, setSnippets)}
+                            title="Change snippet color"
+                            className="color-picker"
+                        />
+                    </label>
                 </>
             )}
         </div>
