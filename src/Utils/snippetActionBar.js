@@ -34,9 +34,6 @@ export const SnippetActionBar = ({ onSearch, onSort }) => {
                         <span className="material-icons">search</span>
                     </button>
                 )}
-                <button className="folder-button">
-                    <span className="material-icons">folder</span>
-                </button>
                 <button className="sort-button" onClick={onSort}>
                     <span className="material-icons">sort</span>
                 </button>
