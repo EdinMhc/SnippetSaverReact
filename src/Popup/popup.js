@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
+import '../Styles/ColorPicker.css';
 import {
     applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet,
     getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit, editName, 
@@ -104,52 +105,71 @@ const Popup = () => {
         </Draggable>
     );
 
-    const SnippetActions = ({ snippet }) => (
-        <div className="action-buttons">
-            {snippet.isEditing ? (
-                <span className={`apply-button material-icons ${checkmarkError ? 'checkmark-error' : ''}`} onClick={() => editName(editingId, editingValue, snippets, setSnippets, setCheckmarkError)}>
-                    check
-                </span>
-            ) : (
-                <>
-                    <span className="favorite-button material-icons action-button" 
-                    onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}
-                    title="Favorite snippet"
-                    >
-                        {snippet.isFavorite ? 'favorite' : 'favorite_border'}
-                    </span>
-                    <span className="edit-button material-icons action-button" 
-                    onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName)}
-                    title="Edit snippet"
-                    >
-                        edit
-                    </span>
-                    <span className="copy-button material-icons action-button" onClick={() => copySnippet(snippet.content)} title="Copy content">
-                        content_copy
-                    </span>
-                    <span className="delete-button material-icons action-button" 
-                        onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}
-                        title="Delete snippet"
+    const SnippetActions = ({ snippet }) => {
+        const [showColorOptions, setShowColorOptions] = useState(false);
+    
+        const handleColorChange = (color) => {
+            updateSnippetColor(snippet.id, color, snippets, setSnippets);
+            setShowColorOptions(false);
+        };
+    
+        return (
+            <div className="action-buttons">
+                {showColorOptions ? (
+                    <div className="color-options-container">
+                        {["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3"].map((color) => (
+                            <button
+                                key={color}
+                                className="color-option"
+                                style={{ backgroundColor: color }}
+                                onClick={() => handleColorChange(color)}
+                                title={`Set color to ${color}`}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <>
+                        <span
+                            className="favorite-button material-icons action-button"
+                            onClick={() => toggleFavoriteStatus(snippet.name, snippets, setSnippets)}
+                            title="Favorite snippet"
                         >
-                        delete
-                    </span>
-                    <label className="color-picker-wrapper">
-                        <span className="palette-icon material-icons" title="Change color">
+                            {snippet.isFavorite ? "favorite" : "favorite_border"}
+                        </span>
+                        <span
+                            className="edit-button material-icons action-button"
+                            onClick={() => toggleEdit(snippet.id, snippets, setEditingValue, setEditingId, setSnippets, setOriginalName)}
+                            title="Edit snippet"
+                        >
+                            edit
+                        </span>
+                        <span
+                            className="copy-button material-icons action-button"
+                            onClick={() => copySnippet(snippet.content)}
+                            title="Copy content"
+                        >
+                            content_copy
+                        </span>
+                        <span
+                            className="delete-button material-icons action-button"
+                            onClick={() => deleteSnippet(snippet.name, snippets, setSnippets)}
+                            title="Delete snippet"
+                        >
+                            delete
+                        </span>
+                        <span
+                            className="palette-icon material-icons action-button"
+                            onClick={() => setShowColorOptions(true)}
+                            title="Change color"
+                        >
                             palette
                         </span>
-                        <input
-                            type="color"
-                            value={snippet.color || '#333'}
-                            onChange={(e) => updateSnippetColor(snippet.id, e.target.value, snippets, setSnippets)}
-                            title="Change snippet color"
-                            className="color-picker"
-                        />
-                    </label>
-                </>
-            )}
-        </div>
-    );
-
+                    </>
+                )}
+            </div>
+        );
+    };
+    
     return (
         <div className="popup-container">
             <h1 id="header">Snippet Saver</h1>

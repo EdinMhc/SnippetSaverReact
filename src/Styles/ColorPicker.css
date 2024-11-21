@@ -1,0 +1,54 @@
+.color-picker-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.palette-icon {
+    cursor: pointer;
+}
+
+.color-options {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background: #444;
+    border: 1px solid #666;
+    border-radius: 5px;
+    padding: 5px;
+    z-index: 9999;
+    display: flex;
+    gap: 5px;
+    flex-direction: row;
+}
+
+.color-picker-wrapper:hover .color-options {
+    display: flex;
+}
+
+.color-option:hover {
+    border: 2px solid #fff;
+}
+
+.color-options-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px; 
+    height: 40px;
+}
+
+.color-option {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
