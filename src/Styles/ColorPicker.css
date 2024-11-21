@@ -11,10 +11,6 @@
     display: flex;
 }
 
-.color-option:hover {
-    border: 2px solid #fff;
-}
-
 .color-options-container {
     display: flex;
     justify-content: space-between;
@@ -32,11 +28,11 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    border: 1px solid;
-    border-color: black;
+    border: 1px solid black;
 }
 
 .color-option:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid #fff;
 }

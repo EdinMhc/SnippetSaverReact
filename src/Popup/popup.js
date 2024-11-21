@@ -117,7 +117,7 @@ const Popup = () => {
             <div className="action-buttons">
                 {showColorOptions ? (
                     <div className="color-options-container">
-                        {["#D3D3D3", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3"].map((color) => (
+                        {["#D3D3D3", "#6cff93", "#ff4b4b", "#fcff2b", "#eca514"].map((color) => (
                             <button
                                 key={color}
                                 className="color-option"
