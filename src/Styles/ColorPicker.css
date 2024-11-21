@@ -7,21 +7,6 @@
     cursor: pointer;
 }
 
-.color-options {
-    display: none;
-    position: absolute;
-    top: 30px;
-    left: 0;
-    background: #444;
-    border: 1px solid #666;
-    border-radius: 5px;
-    padding: 5px;
-    z-index: 9999;
-    display: flex;
-    gap: 5px;
-    flex-direction: row;
-}
-
 .color-picker-wrapper:hover .color-options {
     display: flex;
 }
@@ -46,6 +31,8 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid;
+    border-color: black;
 }
 
 .color-option:hover {
