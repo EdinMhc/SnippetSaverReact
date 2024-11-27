@@ -36,3 +36,37 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border: 2px solid #fff;
 }
+
+
+.color-picker {
+    margin-left: 10px;
+    cursor: pointer;
+    border: 1px;
+    border-color: black;
+    background: #333;
+    padding: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.color-picker-wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.palette-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.color-picker {
+    appearance: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    cursor: pointer;
+}

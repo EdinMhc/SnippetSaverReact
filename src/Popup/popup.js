@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../Styles/popup.css';
-import '../Styles/ColorPicker.css';
+import '../Styles/colorPicker.css';
 import {
     applyNameChange, saveSnippet, toggleFavoriteStatus, copySnippet, deleteSnippet,
     getHandleAddingName, getHandleAddingContent, getToggleSnippetsVisibility, saveSnippetOrder, toggleEdit, editName, 
