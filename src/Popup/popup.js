@@ -112,21 +112,35 @@ const Popup = () => {
             updateSnippetColor(snippet.id, color, snippets, setSnippets);
             setShowColorOptions(false);
         };
+
+        const handleCloseColorPicker = () => {
+            setShowColorOptions(false);
+        };
     
         return (
             <div className="action-buttons">
-                {showColorOptions ? (
-                    <div className="color-options-container">
-                        {["#D3D3D3", "#6cff93", "#ff4b4b", "#fcff2b", "#eca514"].map((color) => (
-                            <button
-                                key={color}
-                                className="color-option"
-                                style={{ backgroundColor: color }}
-                                onClick={() => handleColorChange(color)}
-                                title={`Set color to ${color}`}
-                            />
-                        ))}
+            {showColorOptions ? (
+                <div className="color-options-container">
+                    {/* Close button */}
+                    <div
+                        className="color-close-button"
+                        onClick={handleCloseColorPicker}
+                        title="Cancel color selection"
+                    >
+                        &times;
                     </div>
+                    
+                    {/* Color options */}
+                    {["#D3D3D3", "#33FF57", "#3357FF", "#F3FF33", "#fc325e"].map((color) => (
+                        <button
+                            key={color}
+                            className="color-option"
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleColorChange(color)}
+                            title={`Set color to ${color}`}
+                        />
+                    ))}
+                </div>
                 ) : (
                     <>
                         <span
